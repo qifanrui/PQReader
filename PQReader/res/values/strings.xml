@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PQReader</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="pingmu">屏幕</string>
+    <string name="recently_read">最近阅读</string>
+    <string name="my_resource">我的资源</string>
+    <string name="my_bookrack">我的书架</string>
+    <string name="bookname">书名</string>
+    <string name="booklength">大小</string>
+    <string name="readlength">进度</string>
+    <string name="bookinput">智能导入</string>
+    <string name="exit">退出程序</string>
+    <string name="input">智能导入本地书籍</string>
+    <string name="readhistory_loading_over">readhistory_loading_over</string>
+    <string name="min_booklength">最小文件长度</string>
+    <string name="_0">0</string>
+    <string name="_2048k">2048k</string>
+    <string name="txt">txt</string>
+    <string name="umd">umd</string>
+    <string name="epub">epub</string>
+    <string name="_sdcard_">/sdcard/</string>
+    <string name="one_input">一键导入</string>
+    <string name="my_books">我的书籍</string>
+    <string name="chapter_name">章名</string>
+    <string name="battery">电池</string>
+    <string name="time">时间</string>
+
+</resources>

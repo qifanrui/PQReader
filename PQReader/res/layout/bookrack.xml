@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv_title_text"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/titlebg"
+        android:gravity="center"
+        android:text="@string/recently_read"
+        android:textSize="20sp" />
+
+    <ListView
+        android:id="@+id/lv_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1000" >
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bottomtabbg"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_resource"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/my_resource"
+            android:textSize="20sp" />
+	
+        <TextView
+            android:id="@+id/tv_bookrack"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/my_bookrack"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+</LinearLayout>

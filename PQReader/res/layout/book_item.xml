@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/iv_bookimg"
+        android:layout_width="80dp"
+        android:layout_height="114dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/cover_bg"
+        android:contentDescription="@string/bookname" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="114dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical" 
+        >
+
+        <TextView
+            android:id="@+id/tv_bookname"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:textSize="30sp"
+            android:gravity="center_vertical"
+            android:text="@string/bookname" 
+            android:singleLine="true"/>
+
+        <TextView
+            android:id="@+id/tv_booklength"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            android:text="@string/booklength" />
+
+        <TextView
+            android:id="@+id/tv_readlength"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:text="@string/readlength" />
+    </LinearLayout> 
+
+</LinearLayout>
