@@ -101,7 +101,7 @@ public class BookDAO {
 		ContentValues values = new ContentValues();
 		values.put("readlength", length);
 		values.put("state", state);
-		db.update("book", values, "name=?", new String[] { name });
+		db.update("book", values, "bookname=?", new String[] { name });
 		db.close();
 	}
 
@@ -111,7 +111,7 @@ public class BookDAO {
 	 */
 	public int delete(String name) {
 		SQLiteDatabase db = helpar.getWritableDatabase();
-		int id = db.delete("book", "name=?", new String[] { name });
+		int id = db.delete("book", "bookname=?", new String[] { name });
 		db.close();
 		return id;
 	}

@@ -2,18 +2,17 @@ package com.peng.pqreader;
 
 import java.io.File;
 
-import com.peng.pqreader.DB.BookDAO;
-import com.peng.pqreader.bean.Book;
-import com.peng.pqreader.uitl.PQTime;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.format.Time;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import com.peng.pqreader.DB.BookDAO;
+import com.peng.pqreader.bean.Book;
+import com.peng.pqreader.uitl.PQTime;
 
 public class Bookinput extends Activity {
 	private SeekBar sb_min;
@@ -63,7 +62,7 @@ public class Bookinput extends Activity {
 
 	}
 
-	private void getAllFiles(File root) {
+	public void getAllFiles(File root) {
 		File files[] = root.listFiles();
 		if (files != null)
 			for (File f : files) {
@@ -79,8 +78,9 @@ public class Bookinput extends Activity {
 							BookDAO dao = new BookDAO(this);
 							if (dao.find(name) == null) {
 								String time = PQTime.getTime();
-								Book book = new Book(name, null,
-										(int) f.length() / 1024, 0, 0, time,
+								String strname=name.substring(0, name.lastIndexOf("."));
+								Book book = new Book(strname, null,
+										(int) f.length(), 0, 0, time,
 										path);
 								dao.add(book);
 							}

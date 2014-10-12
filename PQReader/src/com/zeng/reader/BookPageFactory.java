@@ -211,13 +211,13 @@ public class BookPageFactory {
 			}
 			while (strParagraph.length() > 0) {
 				float str_pixel = mPaint.measureText(strParagraph);
-				System.out.println(str_pixel);
+				//System.out.println(str_pixel);
 				int nSize = mPaint.breakText(strParagraph, true, mVisibleWidth,
 						null);
 				lines.add(strParagraph.substring(0, nSize));//
 				strParagraph = strParagraph.substring(nSize);//
 				if (lines.size() >= mLineCount) {
-					System.out.println(lines.size());
+				//	System.out.println(lines.size());
 					break;
 				}
 			}

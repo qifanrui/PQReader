@@ -1,5 +1,6 @@
 package com.peng.pqreader;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,11 +83,23 @@ public class Bookrack extends Activity {
 		List<Book> books = dao.findAll();
 		List<Map<String, Object>> data = new ArrayList<>();
 		for (Book book : books) {
+			DecimalFormat df = new DecimalFormat("#0.0");
+			
 			Map<String, Object> map = new HashMap<>();
 			map.put("bookname", book.getBookname());
-			map.put("booklength", book.getBooklength());
-			map.put("readlength",
-					"ÒÑÔÄ¶Á:" + book.getReadlength() / book.getBooklength() + "%");
+			float length=book.getBooklength();
+			String strlength = "";
+			if ((length/1024)>1) {
+				strlength=df.format(length/1024)+"k";
+				length=length/1024;
+				if (length/1024>1) {
+					strlength=df.format(length/1024)+"M";
+				}
+			}
+			map.put("booklength", strlength);
+			DecimalFormat df1 = new DecimalFormat("#0.0");
+			String strPercent = df1.format(book.getReadlength()*100f/ book.getBooklength()) + "%";
+			map.put("readlength","ÒÑÔÄ¶Á:" + strPercent);
 			Random random = new Random();
 			int id = random.nextInt(10);
 			switch (id) {

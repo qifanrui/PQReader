@@ -14,6 +14,8 @@ public class BookSQLiteOpenHelpar extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String sql = "CREATE TABLE book(bookname varchar(20) primary key,author varchar(20), booklength integer,readlength integer,state integer default 0,readtime varchar(20),bookpath varchar(50))";
 		db.execSQL(sql);
+		String sql1 = "CREATE TABLE bookTag(bookname varchar(20) primary key,bufbegin integer,bufend integer)";
+		db.execSQL(sql1);
 	}
 
 	@Override

@@ -15,10 +15,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
-import com.peng.pqreader.R;
-import com.peng.pqreader.DB.BookDAO;
-import com.peng.pqreader.bean.Book;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -45,6 +41,12 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.peng.pqreader.R;
+import com.peng.pqreader.DB.BookDAO;
+import com.peng.pqreader.DB.BookTagDAO;
+import com.peng.pqreader.bean.Book;
+import com.peng.pqreader.bean.BookTag;
+
 @SuppressLint({ "WrongCall", "SdCardPath" })
 public class MainReader extends Activity {
 	/** Called when the activity is first created. */
@@ -54,7 +56,7 @@ public class MainReader extends Activity {
 	BookPageFactory pagefactory;
 	private Book book;
 	private BookDAO dao;
-	
+
 	@SuppressLint("SimpleDateFormat")
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -64,37 +66,53 @@ public class MainReader extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		DisplayMetrics dm=new DisplayMetrics();
+		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		int width=dm.widthPixels;
-		int height=dm.heightPixels;
-		System.out.println("宽"+width+"-------------------------高"+height);
-		mPageWidget = new PageWidget(this,width,height);
-		setContentView(mPageWidget); 
-		Intent intent=getIntent();
-		Bundle bundle=intent.getExtras();
-		String name=bundle.getString("bookname");
-		dao=new BookDAO(this);
-		book=dao.find(name);
+		int width = dm.widthPixels;
+		int height = dm.heightPixels;
+		//System.out.println("宽" + width + "-------------------------高" + height);
+		mPageWidget = new PageWidget(this, width, height);
+		setContentView(mPageWidget);
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		String name = bundle.getString("bookname");
+		dao = new BookDAO(this);
+		book = dao.find(name);
 		// 若是要修改分辨率的话， 请自己手动该 480 800 两个值。
-		mCurPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		mNextPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		mCurPageBitmap = Bitmap.createBitmap(width, height,
+				Bitmap.Config.ARGB_8888);
+		mNextPageBitmap = Bitmap.createBitmap(width, height,
+				Bitmap.Config.ARGB_8888);
 		//
 		// 两画布
 		mCurPageCanvas = new Canvas(mCurPageBitmap);
 		mNextPageCanvas = new Canvas(mNextPageBitmap);
 		pagefactory = new BookPageFactory(width, height);
 		// 设置一张背景图片
-		pagefactory.setBgBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.read_bg1));
+		pagefactory.setBgBitmap(BitmapFactory.decodeResource(
+				this.getResources(), R.drawable.read_bg1));
 		//
+		bookfillPath=book.getBookpath();
+		bookName = bookfillPath.substring(
+				bookfillPath.lastIndexOf("/") + 1, bookfillPath.lastIndexOf("."));
 		try {
-			pagefactory.openbook(book.getBookpath());// 打开文件 获取到一个缓存
-			
+			pagefactory.openbook(bookfillPath);// 打开文件 获取到一个缓存
+			BookTagDAO dao=new BookTagDAO(this);
+			BookTag booktag;
+			if (dao.find(bookName)==null) {
+				booktag=new BookTag(bookName, 0, 0);
+				dao.add(booktag);
+			}else{
+				booktag=dao.find(bookName);
+				pagefactory.setM_mbBufBegin(booktag.getBufbegin());
+				pagefactory.setM_mbBufEnd(booktag.getBufbegin());
+			}
 			pagefactory.onDraw(mCurPageCanvas);//
-			
+
 		} catch (Exception e1) {
 			e1.printStackTrace();
-			Toast.makeText(this, "电子书不存在,请将《test.txt》放在SD卡根目录下", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "电子书不存在,请将《test.txt》放在SD卡根目录下",
+					Toast.LENGTH_SHORT).show();
 		}
 
 		mPageWidget.setBitmaps(mCurPageBitmap, mCurPageBitmap);
@@ -139,7 +157,16 @@ public class MainReader extends Activity {
 
 		});
 	}
-
+	protected void onPause() {
+		int bufbegin=pagefactory.getM_mbBufBegin();
+		int bufend=pagefactory.getM_mbBufEnd();
+		BookTagDAO dao=new BookTagDAO(this);
+		dao.update(bookName, bufbegin, bufend);
+		BookDAO dao2=new BookDAO(this);
+		dao2.updateState(bookName, bufbegin, 0);
+		super.onPause();
+	}
+	
 	// 菜单
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -197,7 +224,8 @@ public class MainReader extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-//添加书签
+
+	// 添加书签
 	private void addTag() {
 		// 获取3个值
 		int begin = pagefactory.getM_mbBufBegin();
@@ -211,7 +239,8 @@ public class MainReader extends Activity {
 		if (isExist >= 0) {
 			single.get(isExist).list.add(item);
 			producXML();
-			Toast.makeText(MainReader.this, "添加书签成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainReader.this, "添加书签成功", Toast.LENGTH_SHORT)
+					.show();
 			return;
 		}
 		BookMark bm = new BookMark(bookName, item);
@@ -219,6 +248,7 @@ public class MainReader extends Activity {
 		producXML();
 		Toast.makeText(MainReader.this, "添加书签成功", Toast.LENGTH_SHORT).show();
 	}
+
 	private void checkTag() {
 		try {
 			XmlParser.parseXml(bookMarkPath);
@@ -233,10 +263,11 @@ public class MainReader extends Activity {
 		getData();
 		getLayoutInflater();
 		LayoutInflater inflater = LayoutInflater.from(this);
-//		LayoutInflater inflater = getLayoutInflater().from(this);
+		// LayoutInflater inflater = getLayoutInflater().from(this);
 		View view = inflater.inflate(R.layout.listview, null);
 		final ListView listView = (ListView) view.findViewById(R.id.listview);
-		final TextView textView = (TextView) view.findViewById(R.id.listView_text);
+		final TextView textView = (TextView) view
+				.findViewById(R.id.listView_text);
 		if (data.isEmpty()) {
 			textView.setVisibility(View.VISIBLE);
 			listView.setVisibility(View.GONE);
@@ -246,13 +277,15 @@ public class MainReader extends Activity {
 		}
 
 		adb.setView(view);
-		adapter = new SimpleAdapter(MainReader.this, data, R.layout.list_item, new String[] { "content",
-				"percent", "time" }, new int[] { R.id.textView1, R.id.textView2, R.id.textView3 });
+		adapter = new SimpleAdapter(MainReader.this, data, R.layout.list_item,
+				new String[] { "content", "percent", "time" }, new int[] {
+						R.id.textView1, R.id.textView2, R.id.textView3 });
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				int pos = single.isExist(bookName);
 				BookMark bm = single.get(pos);
 				Items item = bm.getList().get(position);
@@ -271,43 +304,55 @@ public class MainReader extends Activity {
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				int pos = single.isExist(bookName);
 				final BookMark bm = single.get(pos);
 				Items item = bm.getList().get(position);
 				final int position1 = position;// 下面使用
-				AlertDialog.Builder ad = new AlertDialog.Builder(MainReader.this);
+				AlertDialog.Builder ad = new AlertDialog.Builder(
+						MainReader.this);
 				ad.setTitle("删除该书签").setMessage("确定删除?");
-				ad.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				ad.setPositiveButton("确定",
+						new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						bm.getList().remove(position1);// 删除该数据
-						// 再写文件。。
-						producXML();
-						getData();
-						adb.cancel();
-						if (data.isEmpty()) {
-							textView.setVisibility(View.VISIBLE);
-							listView.setVisibility(View.GONE);
-							adb.show();
-							return;
-						}
-						adapter.notifyDataSetChanged();
-						adapter = new SimpleAdapter(MainReader.this, data, R.layout.list_item, new String[] {
-								"content", "percent", "time" }, new int[] { R.id.textView1, R.id.textView2,
-								R.id.textView3 });
-						listView.setAdapter(adapter);
-						adb.show();
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								bm.getList().remove(position1);// 删除该数据
+								// 再写文件。。
+								producXML();
+								getData();
+								adb.cancel();
+								if (data.isEmpty()) {
+									textView.setVisibility(View.VISIBLE);
+									listView.setVisibility(View.GONE);
+									adb.show();
+									return;
+								}
+								adapter.notifyDataSetChanged();
+								adapter = new SimpleAdapter(
+										MainReader.this,
+										data,
+										R.layout.list_item,
+										new String[] { "content", "percent",
+												"time" },
+										new int[] { R.id.textView1,
+												R.id.textView2, R.id.textView3 });
+								listView.setAdapter(adapter);
+								adb.show();
 
-					}
-				}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+							}
+						})
+						.setNegativeButton("取消",
+								new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
 
-					}
-				}).show();
+									}
+								}).show();
 
 				return false;
 			}
@@ -334,11 +379,11 @@ public class MainReader extends Activity {
 	}
 
 	//
-	private String bookName = "test";
+	private String bookfillPath;
+	private String bookName ;
 	private long begin_pos;
 	private long end_pos;
 	private String content;// 只取第一行;
-	private String bookfillPath ;
 	private String bookMarkPath = "/sdcard/BookMark/bookmark.xml";
 
 	/**
@@ -346,7 +391,6 @@ public class MainReader extends Activity {
 	 */
 	@SuppressLint("SdCardPath")
 	private boolean producXML() {
-		
 
 		try {
 			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -376,10 +420,14 @@ public class MainReader extends Activity {
 					xmlSerializer.attribute(null, "name", mark.getBookName());
 					for (Items item : mark.getList()) {
 						xmlSerializer.startTag(null, "items");
-						xmlSerializer.attribute(null, "begin", item.getBegin() + "");
-						xmlSerializer.attribute(null, "end", item.getEnd() + "");
-						xmlSerializer.attribute(null, "content", item.getContent());
-						xmlSerializer.attribute(null, "percent", item.getPercent());
+						xmlSerializer.attribute(null, "begin", item.getBegin()
+								+ "");
+						xmlSerializer
+								.attribute(null, "end", item.getEnd() + "");
+						xmlSerializer.attribute(null, "content",
+								item.getContent());
+						xmlSerializer.attribute(null, "percent",
+								item.getPercent());
 						xmlSerializer.attribute(null, "time", item.getTime());
 						xmlSerializer.endTag(null, "items");
 					}
