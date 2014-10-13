@@ -70,7 +70,9 @@ public class BookDAO {
 	 */
 	public List<Book> findAll() {
 		SQLiteDatabase db = helpar.getReadableDatabase();
-		Cursor cursor = db.query("book", null, null, null, null, null, null);
+		String orderBy="readtime DESC";
+		Cursor cursor = db.query("book", null, null, null, null, null, orderBy);
+		
 		List<Book> books = new ArrayList<>();
 		while (cursor.moveToNext()) {
 			String bookname = cursor.getString(0);
@@ -96,11 +98,12 @@ public class BookDAO {
 	 * @param length已阅读的长度
 	 * @param state书的状态
 	 */
-	public void updateState(String name, int length, int state) {
+	public void updateState(String name, int length, int state,String readtime) {
 		SQLiteDatabase db = helpar.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put("readlength", length);
 		values.put("state", state);
+		values.put("readtime", readtime);
 		db.update("book", values, "bookname=?", new String[] { name });
 		db.close();
 	}

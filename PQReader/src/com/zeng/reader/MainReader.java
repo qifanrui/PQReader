@@ -46,6 +46,7 @@ import com.peng.pqreader.DB.BookDAO;
 import com.peng.pqreader.DB.BookTagDAO;
 import com.peng.pqreader.bean.Book;
 import com.peng.pqreader.bean.BookTag;
+import com.peng.pqreader.uitl.PQTime;
 
 @SuppressLint({ "WrongCall", "SdCardPath" })
 public class MainReader extends Activity {
@@ -165,7 +166,8 @@ public class MainReader extends Activity {
 		BookTagDAO dao=new BookTagDAO(this);
 		dao.update(bookName, bufbegin, bufend);
 		BookDAO dao2=new BookDAO(this);
-		dao2.updateState(bookName, bufend, 0);
+		String time=PQTime.getTime();
+		dao2.updateState(bookName, bufend, 0,time);
 		super.onPause();
 	}
 	
