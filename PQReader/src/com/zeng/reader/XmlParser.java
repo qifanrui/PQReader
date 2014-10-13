@@ -22,7 +22,7 @@ public class XmlParser {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(infile));
 		 m_Parser.setInput(reader);
 		 single.removeAll();// 或许要这一句?
-		 int eventType = 0; int count = 0;int index = -1;
+		 int eventType = 0; int count = 0;//int index = -1;
 		 eventType = m_Parser.getEventType();
 		 int columnNumber = m_Parser.getColumnNumber();
 		 Log.i("abc", columnNumber+"") ;

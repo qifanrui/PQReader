@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import com.peng.pqreader.uitl.PQTime;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,6 +29,14 @@ public class BookPageFactory {
 	/** 字节结束位置 */
 	private int m_mbBufEnd = 0;
 	private String m_strCharsetName = "UTF-8";
+	public String getM_strCharsetName() {
+		return m_strCharsetName;
+	}
+
+	public void setM_strCharsetName(String m_strCharsetName) {
+		this.m_strCharsetName = m_strCharsetName;
+	}
+
 	private Bitmap m_book_bg = null;
 	private int mWidth;
 	private int mHeight;
@@ -54,7 +63,6 @@ public class BookPageFactory {
 	private String strTime;
 	private String bookName;
 	public BookPageFactory(int w, int h) {
-		// TODO Auto-generated constructor stub
 		mWidth = w;
 		mHeight = h;
 		// percentPaint.设置不变样式 ；写info专用
@@ -86,6 +94,7 @@ public class BookPageFactory {
 		}.start();
 	}
 
+	@SuppressWarnings("resource")
 	public void openbook(String strFilePath) throws IOException {
 		bookName=strFilePath.substring(strFilePath.lastIndexOf("/")+1, strFilePath.lastIndexOf("."));
 		book_file = new File(strFilePath);
@@ -194,7 +203,6 @@ public class BookPageFactory {
 			try {
 				strParagraph = new String(paraBuf, m_strCharsetName);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			String strReturn = "";
@@ -210,7 +218,7 @@ public class BookPageFactory {
 				lines.add(strParagraph);
 			}
 			while (strParagraph.length() > 0) {
-				float str_pixel = mPaint.measureText(strParagraph);
+				//float str_pixel = mPaint.measureText(strParagraph);
 				//System.out.println(str_pixel);
 				int nSize = mPaint.breakText(strParagraph, true, mVisibleWidth,
 						null);
@@ -226,7 +234,6 @@ public class BookPageFactory {
 					m_mbBufEnd -= (strParagraph + strReturn)
 							.getBytes(m_strCharsetName).length;
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -247,7 +254,6 @@ public class BookPageFactory {
 			try {
 				strParagraph = new String(paraBuf, m_strCharsetName);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			strParagraph = strParagraph.replaceAll("\r\n", "");
@@ -269,7 +275,6 @@ public class BookPageFactory {
 				m_mbBufBegin += lines.get(0).getBytes(m_strCharsetName).length;
 				lines.remove(0);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -300,6 +305,7 @@ public class BookPageFactory {
 		m_lines = pageDown();
 	}
 
+	@SuppressLint("DrawAllocation")
 	public void onDraw(Canvas c) {
 		if (m_lines.size() == 0)
 			m_lines = pageDown();// 初始化时为0
@@ -318,7 +324,7 @@ public class BookPageFactory {
 				c.drawText(strLine, marginWidth, y, mPaint);
 			}
 		}
-		float fPercent = (float) (m_mbBufBegin * 1.0 / m_mbBufLen);
+		float fPercent = (float) (m_mbBufEnd * 1.0 / m_mbBufLen);
 		DecimalFormat df = new DecimalFormat("#0.0");
 		strPercent = df.format(fPercent * 100) + "%";
 		int nPercentWidth = (int) percentPaint.measureText("999.9%") + 1;

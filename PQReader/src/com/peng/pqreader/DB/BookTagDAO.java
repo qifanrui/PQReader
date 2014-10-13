@@ -24,6 +24,7 @@ public class BookTagDAO {
 		values.put("bookname", book.getBookname());
 		values.put("bufbegin", book.getBufbegin());
 		values.put("bufend", book.getBufend());
+		values.put("charsetname", book.getCharsetname());
 		long rowid = db.insert("bookTag", null, values);
 		return rowid;
 	}
@@ -34,7 +35,8 @@ public class BookTagDAO {
 			String bookname = cursor.getString(0);
 			int bufbegin = cursor.getInt(1);
 			int bufend = cursor.getInt(2);
-			BookTag book = new BookTag(bookname,bufbegin,bufend);
+			String charsetname=cursor.getString(3);
+			BookTag book = new BookTag(bookname,bufbegin,bufend,charsetname);
 			cursor.close();
 			db.close();
 			return book;
@@ -47,6 +49,13 @@ public class BookTagDAO {
 		ContentValues values = new ContentValues();
 		values.put("bufbegin", bufbegin);
 		values.put("bufend", bufend);
+		db.update("bookTag", values, "bookname=?", new String[] { name });
+		db.close();
+	}
+	public void updatecharsetname(String name, String charsetname) {
+		SQLiteDatabase db = helpar.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put("charsetname", charsetname);
 		db.update("bookTag", values, "bookname=?", new String[] { name });
 		db.close();
 	}

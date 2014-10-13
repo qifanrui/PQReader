@@ -100,12 +100,14 @@ public class MainReader extends Activity {
 			BookTagDAO dao=new BookTagDAO(this);
 			BookTag booktag;
 			if (dao.find(bookName)==null) {
-				booktag=new BookTag(bookName, 0, 0);
+				String charsetname=pagefactory.getM_strCharsetName();
+				booktag=new BookTag(bookName, 0, 0,charsetname);
 				dao.add(booktag);
 			}else{
 				booktag=dao.find(bookName);
 				pagefactory.setM_mbBufBegin(booktag.getBufbegin());
 				pagefactory.setM_mbBufEnd(booktag.getBufbegin());
+				pagefactory.setM_strCharsetName(booktag.getCharsetname());
 			}
 			pagefactory.onDraw(mCurPageCanvas);//
 
@@ -163,7 +165,7 @@ public class MainReader extends Activity {
 		BookTagDAO dao=new BookTagDAO(this);
 		dao.update(bookName, bufbegin, bufend);
 		BookDAO dao2=new BookDAO(this);
-		dao2.updateState(bookName, bufbegin, 0);
+		dao2.updateState(bookName, bufend, 0);
 		super.onPause();
 	}
 	
@@ -174,6 +176,7 @@ public class MainReader extends Activity {
 		menu.add(0, 1, 0, "查看书签");
 		menu.add(0, 2, 0, "字体放大");
 		menu.add(0, 3, 0, "字体缩小");
+		menu.add(0, 4, 0, "更改字符编码");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -220,6 +223,28 @@ public class MainReader extends Activity {
 			pagefactory.onDraw(mCurPageCanvas);//
 			pagefactory.onDraw(mNextPageCanvas);//
 			mPageWidget.invalidate();
+			break;
+		case 4:
+			BookTagDAO dao=new BookTagDAO(this);
+			String Charset=pagefactory.getM_strCharsetName();
+			if(Charset.equals("gbk")){
+				Charset="UTF-8";
+			}else if(Charset.equals("UTF-8")){
+				Charset="gbk";
+			}
+			dao.updatecharsetname(bookName, Charset);
+			pagefactory.setM_strCharsetName(Charset);
+			int begin2 = pagefactory.getM_mbBufBegin();
+			//
+			pagefactory.setM_mbBufEnd(begin2);
+			try {
+				pagefactory.nextPage();
+				pagefactory.onDraw(mCurPageCanvas);
+				pagefactory.onDraw(mNextPageCanvas);
+				mPageWidget.invalidate();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -308,7 +333,7 @@ public class MainReader extends Activity {
 					int position, long id) {
 				int pos = single.isExist(bookName);
 				final BookMark bm = single.get(pos);
-				Items item = bm.getList().get(position);
+				//Items item = bm.getList().get(position);
 				final int position1 = position;// 下面使用
 				AlertDialog.Builder ad = new AlertDialog.Builder(
 						MainReader.this);
@@ -363,6 +388,7 @@ public class MainReader extends Activity {
 	private SimpleAdapter adapter;
 	ArrayList<Map<String, Object>> data;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void getData() {
 		data = new ArrayList<Map<String, Object>>();
 		if (single.count() == 0)
@@ -381,9 +407,9 @@ public class MainReader extends Activity {
 	//
 	private String bookfillPath;
 	private String bookName ;
-	private long begin_pos;
-	private long end_pos;
-	private String content;// 只取第一行;
+	//private long begin_pos;
+	//private long end_pos;
+	//private String content;// 只取第一行;
 	private String bookMarkPath = "/sdcard/BookMark/bookmark.xml";
 
 	/**
