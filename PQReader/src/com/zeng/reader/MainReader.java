@@ -101,14 +101,14 @@ public class MainReader extends Activity {
 			BookTagDAO dao=new BookTagDAO(this);
 			BookTag booktag;
 			if (dao.find(bookName)==null) {
-				String charsetname=pagefactory.getM_strCharsetName();
-				booktag=new BookTag(bookName, 0, 0,charsetname);
+				//String charsetname=pagefactory.getM_strCharsetName();
+				booktag=new BookTag(bookName, 0, 0,null);
 				dao.add(booktag);
 			}else{
 				booktag=dao.find(bookName);
 				pagefactory.setM_mbBufBegin(booktag.getBufbegin());
 				pagefactory.setM_mbBufEnd(booktag.getBufbegin());
-				pagefactory.setM_strCharsetName(booktag.getCharsetname());
+				//pagefactory.setM_strCharsetName(booktag.getCharsetname());
 			}
 			pagefactory.onDraw(mCurPageCanvas);//
 
@@ -178,7 +178,7 @@ public class MainReader extends Activity {
 		menu.add(0, 1, 0, "查看书签");
 		menu.add(0, 2, 0, "字体放大");
 		menu.add(0, 3, 0, "字体缩小");
-		menu.add(0, 4, 0, "更改字符编码");
+		//menu.add(0, 4, 0, "更改字符编码");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -226,7 +226,7 @@ public class MainReader extends Activity {
 			pagefactory.onDraw(mNextPageCanvas);//
 			mPageWidget.invalidate();
 			break;
-		case 4:
+		/*case 4:
 			BookTagDAO dao=new BookTagDAO(this);
 			String Charset=pagefactory.getM_strCharsetName();
 			if(Charset.equals("gbk")){
@@ -247,7 +247,7 @@ public class MainReader extends Activity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			break;
+			break;*/
 		}
 		return super.onOptionsItemSelected(item);
 	}

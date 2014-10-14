@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.Vector;
 
 import com.peng.pqreader.uitl.PQTime;
+import com.peng.pqreader.uitl.TxtCharset;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -28,14 +29,14 @@ public class BookPageFactory {
 	private int m_mbBufBegin = 0;
 	/** 字节结束位置 */
 	private int m_mbBufEnd = 0;
-	private String m_strCharsetName = "UTF-8";
-	public String getM_strCharsetName() {
+	private String m_strCharsetName;
+	/*public String getM_strCharsetName() {
 		return m_strCharsetName;
 	}
 
 	public void setM_strCharsetName(String m_strCharsetName) {
 		this.m_strCharsetName = m_strCharsetName;
-	}
+	}*/
 
 	private Bitmap m_book_bg = null;
 	private int mWidth;
@@ -103,6 +104,7 @@ public class BookPageFactory {
 		// MappedByteBuffer 缓存
 		m_mbBuf = new RandomAccessFile(book_file, "r").getChannel().map(
 				FileChannel.MapMode.READ_ONLY, 0, lLen);
+		m_strCharsetName=TxtCharset.getCharset(m_mbBuf);
 	}
 
 	// 读取前一断落
