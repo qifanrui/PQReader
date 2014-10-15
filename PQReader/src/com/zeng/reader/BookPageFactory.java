@@ -312,13 +312,19 @@ public class BookPageFactory {
 		if (m_lines.size() == 0)
 			m_lines = pageDown();// 初始化时为0
 		if (m_lines.size() > 0) {
+			String strbookname="";
+			if(bookName.contains(".")){
+				strbookname=bookName.substring(0, bookName.indexOf("."));
+			}else{
+				strbookname=bookName;
+			}
 			if (m_book_bg == null) {
 				c.drawColor(m_backColor);
-				c.drawText(bookName, marginWidth, 24, percentPaint);
+				c.drawText(strbookname, marginWidth, 24, percentPaint);
 			} else {
 				//c.drawColor(m_backColor);
 				c.drawBitmap(m_book_bg, 0, 0, null);
-				c.drawText(bookName, marginWidth, 24, percentPaint);
+				c.drawText(strbookname, marginWidth, 24, percentPaint);
 			}
 			int y = marginHeight;
 			for (String strLine : m_lines) {// 每读取一行就绘一行的文字起点是marginwidth,x,marginHeight+字体大小

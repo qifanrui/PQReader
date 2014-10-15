@@ -4,6 +4,11 @@ import java.nio.ByteBuffer;
 
 public class TxtCharset {
 
+	/**
+	 * 利用txt文件前十个字节获取txt文件的字符集
+	 * @param buf 字节数组，长度必须大于10
+	 * @return
+	 */
 	public static String getCharset(byte[] buf) {
 
 		byte b0 = buf[0];
@@ -24,7 +29,11 @@ public class TxtCharset {
 			}
 		}
 	}
-
+	/**
+	 * 利用文件的缓存获取txt文件的字符集
+	 * @param buffer
+	 * @return
+	 */
 	public static String getCharset(ByteBuffer buffer) {
 		byte[] buf = new byte[10];
 		for (int i = 0; i < 10; i++) {

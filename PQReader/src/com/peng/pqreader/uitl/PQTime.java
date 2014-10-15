@@ -1,19 +1,15 @@
 package com.peng.pqreader.uitl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import android.annotation.SuppressLint;
 import android.text.format.Time;
 
 public class PQTime {
+	@SuppressLint("SimpleDateFormat")
 	public static String getTime() {
-		Time time = new Time("GMT+8");
-		time.setToNow();
-		int year = time.year;
-		int month = time.month;
-		int day = time.monthDay;
-		int minute = time.minute;
-		int hour = time.hour;
-		int sec = time.second;
-		String readtime = year + "- " + month + "-" + day + " " + hour + ": "
-				+ minute + ": " + sec;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String readtime = sdf.format(new Date());
 		return readtime;
 	}
 	public static String getTimeforday() {
